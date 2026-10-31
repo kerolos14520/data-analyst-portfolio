@@ -140,6 +140,7 @@ html.cc,html.cc *{cursor:none!important}
 .cur-ring.hov{width:60px;height:60px;background:rgba(95,240,196,.12);border-color:var(--a)}
 .cur-dot{width:6px;height:6px;background:var(--a)}
 .dlr{margin-top:24px}
+.gal{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px}.gal img{width:100%;display:block;border-radius:12px;border:1px solid var(--line)}@media(max-width:520px){.gal{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -272,7 +273,8 @@ document.querySelectorAll('.filters button').forEach(b=>b.onclick=()=>{
  const f=b.dataset.f;document.querySelectorAll('.proj').forEach(c=>c.style.display=(f==='all'||c.dataset.k===f)?'':'none');
 });
 const modal=$('#modal');
-function openP(i){const p=P[i],slug=IMG[i].replace('.jpg',''),files=[`assets/pdf/${slug}.pdf`];if(p.k==='xl')files.push(`assets/projects/${IMG[i]}`);$('#mc').innerHTML=`<span class="eyebrow">${LBL[p.k]}</span><h2 style="font-size:1.8rem">${p.t}</h2><p class="lead">${p.s}</p><div class="mm">${p.m.map(y=>`<div><b>${y[0]}</b><small>${y[1]}</small></div>`).join('')}</div><ul>${p.pts.map(y=>`<li>${y}</li>`).join('')}</ul><div class="dlr"><button class="btn p" id="dlb">${p.k==='xl'?'Download PDF + dashboard image':'Download PDF report'} ↓</button></div>`;$('#dlb').onclick=()=>files.forEach((f,j)=>setTimeout(()=>{const a=document.createElement('a');a.href=f;a.download=f.split('/').pop();document.body.append(a);a.click();a.remove()},j*800));modal.classList.add('open');$('#mx').focus();}
+const GAL={"adidas": 1, "global-macro": 7, "kickstarter": 4, "superstore": 5, "mini-project": 1, "sales-analytics": 1, "sales-dashboard": 1};
+function openP(i){const p=P[i],slug=IMG[i].replace('.jpg',''),files=[`assets/pdf/${slug}.pdf`];if(p.k==='xl')files.push(`assets/projects/${IMG[i]}`);const pages=Array.from({length:GAL[slug]||1},(_,k)=>`assets/projects/${slug}-p${k+1}.jpg`);$('#mc').innerHTML=`<span class="eyebrow">${LBL[p.k]}</span><h2 style="font-size:1.8rem">${p.t}</h2><p class="lead">${p.s}</p><div class="mm">${p.m.map(y=>`<div><b>${y[0]}</b><small>${y[1]}</small></div>`).join('')}</div><ul>${p.pts.map(y=>`<li>${y}</li>`).join('')}</ul><div class="dlr"><button class="btn p" id="dlb">${p.k==='xl'?'Download PDF + dashboard image':'Download PDF report'} ↓</button></div><div class="gal">${pages.map((f,k)=>`<a href="${f}" target="_blank" rel="noopener"><img src="${f}" alt="${p.t} dashboard page ${k+1}" loading="lazy" onerror="this.parentNode.remove()"></a>`).join('')}</div>`;$('#dlb').onclick=()=>files.forEach((f,j)=>setTimeout(()=>{const a=document.createElement('a');a.href=f;a.download=f.split('/').pop();document.body.append(a);a.click();a.remove()},j*800));modal.classList.add('open');$('#mx').focus();}
 document.getElementById('grid').onclick=e=>{const c=e.target.closest('.proj');if(c)openP(+c.dataset.i)};
 const close=()=>modal.classList.remove('open');
 $('#mx').onclick=close;modal.onclick=e=>{if(e.target===modal)close()};
